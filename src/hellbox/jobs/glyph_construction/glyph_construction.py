@@ -41,6 +41,8 @@ class GlyphConstruction(Chute):
                 constructions = ParseGlyphConstructionListFromString(f, font)
 
             for construction in constructions:
+                if not construction:
+                    continue
                 built = GlyphConstructionBuilder(construction, font)
                 if built.name in font:
                     glyph = font[built.name]
