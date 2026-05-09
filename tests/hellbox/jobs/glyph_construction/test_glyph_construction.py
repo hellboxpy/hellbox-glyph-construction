@@ -50,3 +50,14 @@ class TestGlyphConstruction:
         assert len(font["aacute"].components) == 2
         base_glyphs = {c.baseGlyph for c in font["aacute"].components}
         assert base_glyphs == {"a", "acute"}
+
+    def test_process_handles_blank_lines_in_construction_file(self, test_ufo, tmp_path):
+        construction_file = tmp_path / "test.glyphConstruction"
+        construction_file.write_text("aacute = a + acute@top\n\nacute2 = acute\n")
+
+        source = SourceFile(test_ufo, test_ufo, tmp_path)
+        result = GlyphConstruction(str(construction_file)).process(source)
+
+        font = ufoLib2.Font.open(result.content_path)
+        assert "aacute" in font
+        assert "acute2" in font
