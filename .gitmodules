@@ -1,0 +1,3 @@
+[submodule "vendor/GlyphConstruction"]
+	path = vendor/GlyphConstruction
+	url = https://github.com/typemytype/GlyphConstruction
