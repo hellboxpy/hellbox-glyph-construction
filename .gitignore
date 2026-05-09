@@ -1,0 +1,10 @@
+.cache
+.DS_Store
+.hellbox
+.tox
+.venv
+*.egg-info
+*.pyc
+build/*
+dist/*
+docs/_build/*

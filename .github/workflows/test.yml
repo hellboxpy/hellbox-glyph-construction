@@ -1,0 +1,5 @@
+name: Test
+on: [push, pull_request]
+jobs:
+  test:
+    uses: hellboxpy/gh-actions/.github/workflows/test.yml@main
