@@ -8,26 +8,37 @@ Installation
 
 Using the [hell CLI](https://github.com/hellboxpy/hell#installation):
 
-    $ hell add hellbox-glyph-construction
+```sh
+$ hell add hellbox-glyph-construction
+```
 
 Usage
 -----
 
-    from hellbox.jobs.glyph_construction import GlyphConstruction
+```py
+from hellbox.jobs.glyph_construction import GlyphConstruction
 
-    task.read("source/*.ufo") >> GlyphConstruction("MyFont.glyphConstruction") >> ...
+with Hellbox("build") as task:
+    task.read("source/*.ufo") \
+        >> GlyphConstruction("MyFont.glyphConstruction") \
+        >> task.write("./build/ufo")
+```
 
 Development
 -----------
 
-    uv sync
-    uv run pytest
+```sh
+uv sync
+uv run pytest
+```
 
 Updating the vendored glyphConstruction library
 -----------------------------------------------
 
-    git submodule update --remote vendor/GlyphConstruction
-    cp vendor/GlyphConstruction/Lib/glyphConstruction.py \
-       src/hellbox/jobs/glyph_construction/_vendor/glyphConstruction.py
-    git add vendor src/hellbox/jobs/glyph_construction/_vendor/glyphConstruction.py
-    git commit -m "vendor: update glyphConstruction to <version>"
+```sh
+git submodule update --remote vendor/GlyphConstruction
+cp vendor/GlyphConstruction/Lib/glyphConstruction.py \
+    src/hellbox/jobs/glyph_construction/_vendor/glyphConstruction.py
+git add vendor src/hellbox/jobs/glyph_construction/_vendor/glyphConstruction.py
+git commit -m "vendor: update glyphConstruction to <version>"
+```
