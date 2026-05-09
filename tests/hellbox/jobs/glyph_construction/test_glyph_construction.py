@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import pytest
 import ufoLib2
 
@@ -33,7 +35,8 @@ def test_ufo(tmp_path):
 
 class TestGlyphConstruction:
     def test_init(self):
-        assert GlyphConstruction("test.glyphConstruction")
+        chute = GlyphConstruction("test.glyphConstruction")
+        assert chute.construction_file == Path("test.glyphConstruction")
 
     def test_process_builds_composites(self, test_ufo, tmp_path):
         construction_file = tmp_path / "test.glyphConstruction"

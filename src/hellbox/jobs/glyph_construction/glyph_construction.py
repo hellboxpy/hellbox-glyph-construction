@@ -14,9 +14,9 @@ from hellbox.jobs.glyph_construction._vendor.glyphConstruction import (
 # is the defcon/robofab API. ufoLib2 exposes this as getBounds(layer=None).
 # Patch the property onto the ufoLib2 Glyph class if it's not already present.
 if not hasattr(ufoLib2.objects.glyph.Glyph, "bounds"):
-    ufoLib2.objects.glyph.Glyph.bounds = property(
-        lambda self: tuple(self.getBounds()) if self.getBounds() is not None else None
-    )
+    def _bounds(self):
+        return self.getBounds()
+    ufoLib2.objects.glyph.Glyph.bounds = property(_bounds)
 
 
 class GlyphConstruction(Chute):
