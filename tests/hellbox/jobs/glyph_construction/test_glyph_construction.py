@@ -61,3 +61,27 @@ class TestGlyphConstruction:
         font = ufoLib2.Font.open(result.content_path)
         assert "aacute" in font
         assert "acute2" in font
+
+    def test_process_overwrites_existing_glyph(self, test_ufo, tmp_path):
+        # Pre-populate the font with an existing aacute that has dummy content
+        font = ufoLib2.Font.open(test_ufo)
+        existing = font.newGlyph("aacute")
+        existing.width = 999
+        pen = existing.getPen()
+        pen.moveTo((0, 0))
+        pen.lineTo((100, 0))
+        pen.lineTo((100, 100))
+        pen.closePath()
+        font.save(test_ufo, overwrite=True)
+
+        construction_file = tmp_path / "test.glyphConstruction"
+        construction_file.write_text("aacute = a + acute@top\n")
+
+        source = SourceFile(test_ufo, test_ufo, tmp_path)
+        result = GlyphConstruction(str(construction_file)).process(source)
+
+        font = ufoLib2.Font.open(result.content_path)
+        assert "aacute" in font
+        # Overwritten glyph should have components (not the old contour)
+        assert len(font["aacute"].components) == 2
+        assert len(font["aacute"]) == 0  # no contours

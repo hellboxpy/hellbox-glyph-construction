@@ -17,13 +17,13 @@ _current_layer: ContextVar = ContextVar("_current_layer", default=None)
 
 # The vendored glyphConstruction.py accesses glyph.bounds as a property, which
 # is the defcon/robofab API. ufoLib2 exposes this as getBounds(layer=None).
-# Patch the property onto the ufoLib2 Glyph class if it's not already present.
-# Glyphs that contain components require the layer to resolve them; we read the
-# layer from the context variable set during processing.
-if not hasattr(ufoLib2.objects.glyph.Glyph, "bounds"):
-    def _bounds(self):
-        return self.getBounds(_current_layer.get())
-    ufoLib2.objects.glyph.Glyph.bounds = property(_bounds)
+# Patch the property onto the ufoLib2 Glyph class to ensure we use our layer-aware
+# version. Glyphs that contain components require the layer to resolve them; we read
+# the layer from the context variable set during processing.
+def _bounds(self):
+    return self.getBounds(_current_layer.get())
+
+ufoLib2.objects.glyph.Glyph.bounds = property(_bounds)
 
 
 class GlyphConstruction(Chute):
