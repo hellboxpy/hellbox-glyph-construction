@@ -1,21 +1,11 @@
-hellbox-glyph-construction
-==========================
+# hellbox-glyph-construction
 
 A hellbox job that applies a `.glyphConstruction` file to a UFO source.
 
-Installation
-------------
+## Usage
 
-Using the [hell CLI](https://github.com/hellboxpy/hell#installation):
-
-```sh
-$ hell add hellbox-glyph-construction
-```
-
-Usage
------
-
-```py
+```python
+from hellbox import Hellbox
 from hellbox.jobs.glyph_construction import GlyphConstruction
 
 with Hellbox("build") as task:
@@ -24,16 +14,20 @@ with Hellbox("build") as task:
         >> task.write("./build/ufo")
 ```
 
-Development
------------
+## Installation
+
+```sh
+hell add hellbox-glyph-construction
+```
+
+## Development
 
 ```sh
 uv sync
 uv run pytest
 ```
 
-Updating the vendored glyphConstruction library
------------------------------------------------
+### Updating the vendored glyphConstruction library
 
 ```sh
 git submodule update --remote vendor/GlyphConstruction
