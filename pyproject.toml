@@ -37,7 +37,7 @@ namespaces = true
 exclude = ["hellbox", "hellbox.jobs"]
 
 [dependency-groups]
-dev = ["pytest"]
+dev = ["mdformat", "pytest"]
 
 [tool.uv.sources]
 hellbox = { git = "https://github.com/hellboxpy/hellbox.git" }
