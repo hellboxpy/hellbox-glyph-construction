@@ -49,20 +49,8 @@ sources.hellbox = { git = "https://github.com/hellboxpy/hellbox.git" }
 [tool.ruff]
 exclude = [ "vendor" ]
 
-[[tool.ty.overrides]]
-include = [ "vendor/**", "src/hellbox/jobs/glyph_construction/_vendor/**" ]
-
-[tool.ty.overrides.rules]
-invalid-assignment = "ignore"
-no-matching-overload = "ignore"
-not-subscriptable = "ignore"
-unresolved-attribute = "ignore"
-unresolved-import = "ignore"
-unresolved-reference = "ignore"
-unsupported-operator = "ignore"
-
-[[tool.ty.overrides]]
-include = [ "tests/**" ]
-
-[tool.ty.overrides.rules]
-unresolved-import = "ignore"
+[tool.ty]
+overrides = [
+  { include = [ "vendor/**", "src/hellbox/jobs/glyph_construction/_vendor/**" ], rules = { invalid-assignment = "ignore", no-matching-overload = "ignore", not-subscriptable = "ignore", unresolved-attribute = "ignore", unresolved-import = "ignore", unresolved-reference = "ignore", unsupported-operator = "ignore" } },
+  { include = [ "tests/**" ], rules = { unresolved-import = "ignore" } },
+]
