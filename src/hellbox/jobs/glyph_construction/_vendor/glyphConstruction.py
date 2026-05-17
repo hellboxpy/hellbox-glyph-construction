@@ -39,14 +39,14 @@ glyphAtrributeAlternateSplit = "'"
 variableDeclarationStart = "$"
 variableDeclarationEnd = ""
 
-explicitMathStart = '`'
-explicitMathEnd = '`'
+explicitMathStart = "`"
+explicitMathEnd = "`"
 
 explicitGlyphNameStart = '"'
 explicitGlyphNameEnd = '"'
 
 
-#flags
+# flags
 
 shouldCheckGlyphExists = "?"
 shouldAddSourceGlyphIfExists = ">"
@@ -64,11 +64,14 @@ $variableName = n
 legalFontInfoAttributes = set("descender xHeight capHeight ascender".split(" "))
 legalGlyphMetricHorizontalPositions = set("origin width".split(" "))
 legalGlyphMetricVerticalPositions = set("origin height".split(" "))
-legalBoundsPositions = set("left innerLeft right innerRight top innerTop bottom innerBottom".split(" "))
+legalBoundsPositions = set(
+    "left innerLeft right innerRight top innerTop bottom innerBottom".split(" ")
+)
 legalCalculatablePositions = legalBoundsPositions | set(["center"])
 
 
 # math
+
 
 def _intersectAngles(point1, angle1, point2, angle2):
     """
@@ -97,12 +100,18 @@ def _intesectLines(pt1, pt2):
     True
     """
     (pt1, pt2), (pt3, pt4) = pt1, pt2
-    denom = (pt1[0] - pt2[0]) * (pt3[1] - pt4[1]) - (pt1[1] - pt2[1]) * (pt3[0] - pt4[0])
+    denom = (pt1[0] - pt2[0]) * (pt3[1] - pt4[1]) - (pt1[1] - pt2[1]) * (
+        pt3[0] - pt4[0]
+    )
     if _roundFloat(denom) == 0:
         return None
-    x = (pt1[0] * pt2[1] - pt1[1] * pt2[0]) * (pt3[0] - pt4[0]) - (pt1[0] - pt2[0]) * (pt3[0] * pt4[1] - pt3[1] * pt4[0])
+    x = (pt1[0] * pt2[1] - pt1[1] * pt2[0]) * (pt3[0] - pt4[0]) - (pt1[0] - pt2[0]) * (
+        pt3[0] * pt4[1] - pt3[1] * pt4[0]
+    )
     x /= denom
-    y = (pt1[0] * pt2[1] - pt1[1] * pt2[0]) * (pt3[1] - pt4[1]) - (pt1[1] - pt2[1]) * (pt3[0] * pt4[1] - pt3[1] * pt4[0])
+    y = (pt1[0] * pt2[1] - pt1[1] * pt2[0]) * (pt3[1] - pt4[1]) - (pt1[1] - pt2[1]) * (
+        pt3[0] * pt4[1] - pt3[1] * pt4[0]
+    )
     y /= denom
     return (x, y)
 
@@ -120,21 +129,29 @@ def _diffPoint(pt1, pt2):
 
 if variableDeclarationEnd:
     variableDeclarationEnd = r"\%s" % variableDeclarationEnd
-variablesRE = re.compile(r"\%s\s*(?P<name>[a-zA-Z_][a-zA-Z0-9_]*)\s*\=\s*(?P<value>.*)%s" % (variableDeclarationStart, variableDeclarationEnd))
+variablesRE = re.compile(
+    r"\%s\s*(?P<name>[a-zA-Z_][a-zA-Z0-9_]*)\s*\=\s*(?P<value>.*)%s"
+    % (variableDeclarationStart, variableDeclarationEnd)
+)
 
 simpleVariableRe = re.compile(r"[a-zA-Z_][a-zA-Z0-9_]*")
 
 percentageRe = re.compile(r"[0-9]*%")
 
 # glyphNameRe = re.compile(r'([a-zA-Z_][a-zA-Z0-9_.\-\+\:\*\~\|]*|.notdef)')
-glyphNameRe = re.compile(r'([a-zA-Z_][a-zA-Z0-9_.]*|.notdef)')
+glyphNameRe = re.compile(r"([a-zA-Z_][a-zA-Z0-9_.]*|.notdef)")
 
-explicitMathRe = re.compile(r'\%s(?P<explicitMath>.*?)\%s' % (explicitMathStart, explicitMathEnd))
+explicitMathRe = re.compile(
+    r"\%s(?P<explicitMath>.*?)\%s" % (explicitMathStart, explicitMathEnd)
+)
 
-explicitGlyphNameRe = re.compile(r'\%s(?P<explicitGlyphName>.*?)\%s' % (explicitGlyphNameStart, explicitGlyphNameEnd))
+explicitGlyphNameRe = re.compile(
+    r"\%s(?P<explicitGlyphName>.*?)\%s" % (explicitGlyphNameStart, explicitGlyphNameEnd)
+)
 
 
 # error
+
 
 class GlyphBuilderError(Exception):
     pass
@@ -144,7 +161,6 @@ class GlyphBuilderError(Exception):
 
 
 class ConstructionGlyph(object):
-
     """
     A Glyph like object able set some basic attributes, add components and draw.
     """
@@ -266,7 +282,6 @@ class ConstructionGlyph(object):
 
 
 class MathPoint(tuple):
-
     """
     A math object for calculation with tuples.
 
@@ -336,7 +351,23 @@ class MathPoint(tuple):
         return self._operation(other, operator.truediv)
 
 
-def _parsePosition(name, position, angle, fixedPosition, glyph, font, direction, isBase, prefix, top, bottom, left, right, width, height):
+def _parsePosition(
+    name,
+    position,
+    angle,
+    fixedPosition,
+    glyph,
+    font,
+    direction,
+    isBase,
+    prefix,
+    top,
+    bottom,
+    left,
+    right,
+    width,
+    height,
+):
     # glyph anchor + prefix
     found = _findAnchor(glyph, "%s%s" % (prefix, name))
     if found is not None:
@@ -402,7 +433,7 @@ def _parsePosition(name, position, angle, fixedPosition, glyph, font, direction,
             return position, angle, fixedPosition
 
     # calculate
-    centerValue = .5
+    centerValue = 0.5
     if name.endswith("%"):
         try:
             centerValue = float(name[:-1]) * 0.01
@@ -415,11 +446,12 @@ def _parsePosition(name, position, angle, fixedPosition, glyph, font, direction,
             if isBase:
                 position = (left + width * centerValue, bottom + height * centerValue)
             else:
-                position = (left + width * centerValue + width - width * centerValue * 2,
-                            bottom + height * centerValue + height - height * centerValue * 2)
+                position = (
+                    left + width * centerValue + width - width * centerValue * 2,
+                    bottom + height * centerValue + height - height * centerValue * 2,
+                )
 
         elif name in legalBoundsPositions:
-
             if direction == "y" and name == "top":
                 if isBase:
                     position = (0, top)
@@ -510,20 +542,27 @@ def parsePosition(markGlyph, font, positionName, direction, prefix="", isBase=Fa
         left=left,
         right=right,
         width=width,
-        height=height
+        height=height,
     )
 
     for name in names + percentage:
-        position, angle, fixedPosition = _parsePosition(name, position, angle, fixedPosition, **data)
+        position, angle, fixedPosition = _parsePosition(
+            name, position, angle, fixedPosition, **data
+        )
         nameSpace[name] = MathPoint(position, not isBase and not fixedPosition)
 
     try:
         exec("position=%s" % positionName, nameSpace)
     except ZeroDivisionError:
-        raise GlyphBuilderError("ZeroDivisionError: integer division or modulo by zero in '%s'" % positionName)
+        raise GlyphBuilderError(
+            "ZeroDivisionError: integer division or modulo by zero in '%s'"
+            % positionName
+        )
     except SyntaxError:
         if not percentage:
-            raise GlyphBuilderError("SyntaxError: invalid syntax in '%s'" % positionName)
+            raise GlyphBuilderError(
+                "SyntaxError: invalid syntax in '%s'" % positionName
+            )
     except Exception:
         raise GlyphBuilderError("Something went wrong in '%s'" % positionName)
     position = nameSpace.get("position", position)
@@ -558,7 +597,9 @@ def _findFontInfoValue(font, name):
     return (0, value)
 
 
-def parsePositions(baseGlyph, markGlyph, font, markTransformMap, advanceWidth, advanceHeight):
+def parsePositions(
+    baseGlyph, markGlyph, font, markTransformMap, advanceWidth, advanceHeight
+):
     xx, xy, yx, yy, x, y = 1, 0, 0, 1, advanceWidth, advanceHeight
 
     baseGlyphX = baseGlyphY = baseGlyph
@@ -586,7 +627,9 @@ def parsePositions(baseGlyph, markGlyph, font, markTransformMap, advanceWidth, a
 
         explicitBaseSplit = explicitGlyphNameRe.search(positionX)
         if explicitBaseSplit is not None:
-            explicitBaseGlyphX = positionX[explicitBaseSplit.start(): explicitBaseSplit.end()]
+            explicitBaseGlyphX = positionX[
+                explicitBaseSplit.start() : explicitBaseSplit.end()
+            ]
             positionX = positionX.replace(explicitBaseGlyphX + positionBaseSplit, "")
             baseGlyphX = explicitBaseSplit.group("explicitGlyphName")
         elif positionBaseSplit in positionX:
@@ -594,7 +637,9 @@ def parsePositions(baseGlyph, markGlyph, font, markTransformMap, advanceWidth, a
 
         explicitBaseSplit = explicitGlyphNameRe.search(positionY)
         if explicitBaseSplit is not None:
-            explicitBaseGlyphY = positionY[explicitBaseSplit.start(): explicitBaseSplit.end()]
+            explicitBaseGlyphY = positionY[
+                explicitBaseSplit.start() : explicitBaseSplit.end()
+            ]
             positionY = positionY.replace(explicitBaseGlyphY + positionBaseSplit, "")
             baseGlyphY = explicitBaseSplit.group("explicitGlyphName")
         elif positionBaseSplit in positionY:
@@ -616,18 +661,35 @@ def parsePositions(baseGlyph, markGlyph, font, markTransformMap, advanceWidth, a
                 if glyphSuffixSplit in markGlyph:
                     markGlyph = markGlyph.split(glyphSuffixSplit)[0]
 
-            markPoint1, markAngle1, markFixedX = parsePosition(markGlyph, font, positionX, direction="x", prefix="_")
-            markPoint2, markAngle2, markFixedY = parsePosition(markGlyph, font, positionY, direction="y", prefix="_")
-            intersection = _intersectAngles(markPoint1, markAngle1, markPoint2, markAngle2)
+            markPoint1, markAngle1, markFixedX = parsePosition(
+                markGlyph, font, positionX, direction="x", prefix="_"
+            )
+            markPoint2, markAngle2, markFixedY = parsePosition(
+                markGlyph, font, positionY, direction="y", prefix="_"
+            )
+            intersection = _intersectAngles(
+                markPoint1, markAngle1, markPoint2, markAngle2
+            )
             if intersection is not None:
                 markX, markY = intersection
             elif (markPoint1, markAngle1) == (markPoint2, markAngle2):
                 markX, markY = markPoint1
 
-            if baseGlyphX is not None and baseGlyphY is not None and baseGlyphX in font and baseGlyphY in font:
-                basePoint1, baseAngle1, _ = parsePosition(baseGlyphX, font, positionX, direction="x", isBase=True)
-                basePoint2, baseAngle2, _ = parsePosition(baseGlyphY, font, positionY, direction="y", isBase=True)
-                intersection = _intersectAngles(basePoint1, baseAngle1, basePoint2, baseAngle2)
+            if (
+                baseGlyphX is not None
+                and baseGlyphY is not None
+                and baseGlyphX in font
+                and baseGlyphY in font
+            ):
+                basePoint1, baseAngle1, _ = parsePosition(
+                    baseGlyphX, font, positionX, direction="x", isBase=True
+                )
+                basePoint2, baseAngle2, _ = parsePosition(
+                    baseGlyphY, font, positionY, direction="y", isBase=True
+                )
+                intersection = _intersectAngles(
+                    basePoint1, baseAngle1, basePoint2, baseAngle2
+                )
                 if intersection is not None:
                     baseX, baseY = intersection
                 elif (basePoint1, baseAngle1) == (basePoint2, baseAngle2):
@@ -692,10 +754,7 @@ def parsePositions(baseGlyph, markGlyph, font, markTransformMap, advanceWidth, a
     return markGlyph, transformMatrix
 
 
-glyphAttributeAlternateMap = dict(
-    leftMargin="rightMargin",
-    rightMargin="leftMargin"
-)
+glyphAttributeAlternateMap = dict(leftMargin="rightMargin", rightMargin="leftMargin")
 
 
 def _parseGlyphMetric(construction, font, attr):
@@ -721,7 +780,7 @@ def _parseGlyphMetric(construction, font, attr):
                     trimIndex = 0
 
                 for i in search.finditer(value):
-                    newText += value[lastIndex:i.start()]
+                    newText += value[lastIndex : i.start()]
                     glyphName = i.group()
                     if trimIndex:
                         glyphName = glyphName[trimIndex:-trimIndex]
@@ -810,7 +869,7 @@ glyphAttrFuncMap = {
     "markColor": parseMark,
     "width": parseWidth,
     "leftMargin": parseLeftMargin,
-    "rightMargin": parseRightMargin
+    "rightMargin": parseRightMargin,
 }
 
 
@@ -1002,10 +1061,18 @@ def kernValueForGlyphPair(font, pair):
         groupName1 = groupName2 = None
         groupName1Found = groupName2Found = False
         for groupName, group in font.groups.items():
-            if not groupName1Found and groupName.startswith(side1Prefix) and side1 in group:
+            if (
+                not groupName1Found
+                and groupName.startswith(side1Prefix)
+                and side1 in group
+            ):
                 groupName1 = groupName
                 groupName1Found = True
-            if not groupName2Found and groupName.startswith(side2Prefix) and side2 in group:
+            if (
+                not groupName2Found
+                and groupName.startswith(side2Prefix)
+                and side2 in group
+            ):
                 groupName2 = groupName
                 groupName2Found = True
             if groupName1Found and groupName2Found:
@@ -1032,11 +1099,12 @@ def parseApplyKerning(construction):
     >>> parseApplyKerning("a+grave")
     (False, 'a+grave')
     """
-    return applyKerningSplit in construction, construction.replace(applyKerningSplit, "")
+    return applyKerningSplit in construction, construction.replace(
+        applyKerningSplit, ""
+    )
 
 
 class ConstructionFlags(set):
-
     allFlags = set((shouldDecomposeResult, shouldAddSourceGlyphIfExists))
 
     @property
@@ -1080,6 +1148,7 @@ def parseFlags(construction):
         construction = construction[1:]
     return foundFlags, construction
 
+
 # def parseShouldDecompose(construction):
 #     """
 #     Parse construction and return if the construction should be decomposed at the end.
@@ -1117,7 +1186,9 @@ escapeMathOperatorMap = {
     "-": "<<sub>>",
 }
 
-escapeMathOperatorMapReversed = {value: key for key, value in escapeMathOperatorMap.items()}
+escapeMathOperatorMapReversed = {
+    value: key for key, value in escapeMathOperatorMap.items()
+}
 
 
 def forceEscapingMathOperations(data):
@@ -1134,7 +1205,7 @@ def forceEscapingMathOperations(data):
     result = ""
     index = 0
     for found in explicitMathRe.finditer(data):
-        result += data[index:found.start()]
+        result += data[index : found.start()]
         seq = found.group("explicitMath")
         for find, replace in escapeMathOperatorMap.items():
             seq = seq.replace(find, replace)
@@ -1212,7 +1283,14 @@ def GlyphConstructionBuilder(construction, font, characterMap=None):
 
         for markGlyph in markGlyphs:
             markGlyph = reEscapeMathOperations(markGlyph)
-            component, transformMatrix = parsePositions(baseMarkGlyph, markGlyph, font, markTransformMap, advanceWidth, advanceHeight)
+            component, transformMatrix = parsePositions(
+                baseMarkGlyph,
+                markGlyph,
+                font,
+                markTransformMap,
+                advanceWidth,
+                advanceHeight,
+            )
 
             baseMarkGlyph = component
 
@@ -1373,6 +1451,7 @@ def ParseGlyphConstructionListFromString(source, font=None):
 # Tests
 # -----
 
+
 def testDummyGlyph(glyph, i):
     add = 20 * i
     pen = glyph.getPen()
@@ -1384,6 +1463,7 @@ def testDummyGlyph(glyph, i):
 
 def testDummyFont():
     from defcon import Font
+
     font = Font()
     for i, glyphName in enumerate(("a", "grave", "f", "i", "agrave")):
         font.newGlyph(glyphName)
@@ -1394,6 +1474,7 @@ def testDummyFont():
 
 def testDigestGlyph(glyph):
     from fontPens.digestPointPen import DigestPointPen
+
     pen = DigestPointPen()
     glyph.drawPoints(pen)
     return (
@@ -1402,7 +1483,7 @@ def testDigestGlyph(glyph):
         glyph.unicodes,
         glyph.markColor,
         glyph.note,
-        pen.getDigest()
+        pen.getDigest(),
     )
 
 
@@ -1605,9 +1686,13 @@ def testGlyphConstructionBuilder():
 if __name__ == "__main__":
     import sys
     import doctest
+
     sys.exit(doctest.testmod().failed)
 
     import defcon
-    font = defcon.Font('/Users/frederik/Downloads/glyph-contruction-issue-#76/glyph-contruction-issue.ufo')
+
+    font = defcon.Font(
+        "/Users/frederik/Downloads/glyph-contruction-issue-#76/glyph-contruction-issue.ufo"
+    )
     result = GlyphConstructionBuilder("a = ^ noHyphen - 10", font)
     print(result.leftMargin, result.rightMargin, result.width)

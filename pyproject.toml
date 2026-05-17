@@ -37,7 +37,32 @@ namespaces = true
 exclude = ["hellbox", "hellbox.jobs"]
 
 [dependency-groups]
-dev = ["mdformat", "pytest"]
+dev = [
+    "mdformat",
+    "pytest",
+    "ruff>=0,<1",
+    "ty>=0.0.34",
+]
 
+[tool.ruff]
+exclude = ["vendor"]
+
+[[tool.ty.overrides]]
+include = ["vendor/**", "src/hellbox/jobs/glyph_construction/_vendor/**"]
+
+[tool.ty.overrides.rules]
+unresolved-import = "ignore"
+unresolved-attribute = "ignore"
+unsupported-operator = "ignore"
+invalid-assignment = "ignore"
+no-matching-overload = "ignore"
+not-subscriptable = "ignore"
+unresolved-reference = "ignore"
+
+[[tool.ty.overrides]]
+include = ["tests/**"]
+
+[tool.ty.overrides.rules]
+unresolved-import = "ignore"
 [tool.uv.sources]
 hellbox = { git = "https://github.com/hellboxpy/hellbox.git" }

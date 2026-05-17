@@ -15,6 +15,7 @@ from hellbox.jobs.glyph_construction._vendor.glyphConstruction import (
 # bounds property patch below can forward it to getBounds().
 _current_layer: ContextVar = ContextVar("_current_layer", default=None)
 
+
 # The vendored glyphConstruction.py accesses glyph.bounds as a property, which
 # is the defcon/robofab API. ufoLib2 exposes this as getBounds(layer=None).
 # Patch the property onto the ufoLib2 Glyph class to ensure we use our layer-aware
@@ -23,7 +24,8 @@ _current_layer: ContextVar = ContextVar("_current_layer", default=None)
 def _bounds(self):
     return self.getBounds(_current_layer.get())
 
-ufoLib2.objects.glyph.Glyph.bounds = property(_bounds)
+
+ufoLib2.objects.glyph.Glyph.bounds = property(_bounds)  # ty: ignore[unresolved-attribute]
 
 
 class GlyphConstruction(Chute):
